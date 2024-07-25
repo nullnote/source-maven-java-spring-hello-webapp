@@ -27,20 +27,22 @@ pipeline {
     stage('Build Docker Image') {
       agent any
       steps {
-        sh 'docker image build -t webapp:hello-world'
+        sh 'docker image build -t webapp:hello-world .'
       }
     }
     stage('Tag Docker Image') {
       agent any
       steps {
-        sh '<COMMAND>'
+        sh 'docker image tag webapp:hello-world nullnote/webapp:$BUILD_NUMBER'
+        sh 'docker image tag webapp:hello-world nullnote/webapp:latest'
       }
     }
     stage('Publish Docker Image') {
       agent any
       steps {
         withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
-          sh '<COMMAND>'
+          sh 'docker image push nullnote/webapp:$BUILD_NUMBER'
+          sh 'docker image push nullnote/webapp:latest'
         }
       }
     }
